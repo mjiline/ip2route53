@@ -1,0 +1,36 @@
+#!/bin/bash
+
+function err {
+	echo $@
+	logger -t $SELFNAME "$@"
+	exit 1
+}
+
+SELFDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SELFNAME="$(basename "$0")"
+
+# install ourself to a hook (requires root priveleges)
+if [ ! -f "/etc/network/if-up.d/$SELFNAME" ] ; then
+	ln -sf "$SELFDIR/$SELFNAME"  "/etc/network/if-up.d/$SELFNAME" || err "Failed to create ifup link"
+fi  
+
+# Start in background to allow if-up to proceed
+(
+	cd $SELFDIR || err "Can't chdir to $SELFDIR"
+
+	. config || err "Cant source config file"
+
+	[ -n "$ZONEID" ] || err "ZONEID is not configured"
+	[ -n "$HOSTNAME" ] || err "HOSTNAME is not configured"
+
+	IP=$(curl -s https://api.ipify.org|grep -E '^[0-9]+.[0-9]+.[0-9]+.[0-9]+$'|head -n 1)
+	[ -n "$IP" ] || err "Failed to figure our my IP"
+
+	aws route53 change-resource-record-sets \
+		--cli-input-json \
+			"$(sed -e s/__IP__/$IP/g -e s/__HOSTNAME__/$HOSTNAME/g -e s/__ZONEID__/$ZONEID/g <change_tmpl.json)" \
+		|| err "Failed to update route53"
+
+) 2>&1 | logger -t $SELFNAME &
+
+

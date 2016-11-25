@@ -1,0 +1,17 @@
+#
+# AWS Access (must be able to execute route53* actions)
+# (optional)
+#
+#export AWS_ACCESS_KEY_ID=''
+#export AWS_SECRET_ACCESS_KEY=''
+
+#
+# Zone ID from route53
+#
+ZONEID='Z1R8UBAEXAMPLE'
+
+#
+# Host name to publish to route53
+# (pay attention to the dot at the end of the name)
+#
+HOSTNAME='www.example.com.'

@@ -1,0 +1,21 @@
+{
+    "HostedZoneId": "__ZONEID__", 
+    "ChangeBatch": {
+        "Comment": "Dynamic DNS Update", 
+        "Changes": [
+            {
+                "Action": "UPSERT", 
+                "ResourceRecordSet": {
+                    "Type": "A", 
+                    "Name": "__HOSTNAME__", 
+                    "TTL": 60,
+                    "ResourceRecords": [
+                        {
+                            "Value": "__IP__"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}
