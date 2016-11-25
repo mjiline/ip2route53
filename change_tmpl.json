@@ -8,7 +8,7 @@
                 "ResourceRecordSet": {
                     "Type": "A", 
                     "Name": "__HOSTNAME__", 
-                    "TTL": 60,
+                    "TTL": __TTL__,
                     "ResourceRecords": [
                         {
                             "Value": "__IP__"
